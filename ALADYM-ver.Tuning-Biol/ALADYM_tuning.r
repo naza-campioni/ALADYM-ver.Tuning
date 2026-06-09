@@ -597,7 +597,7 @@ b2 <- ggplot() +
   ) +
   scale_color_manual(values = c("Simulation" = "black", "Observed" = "blue")) +
   theme_bw() +
-  ggtitle(paste("SSB – Best combo:", best_combo)) +
+  ggtitle(paste("Fbar – Best combo:", best_combo)) +
   ylab("F") +
   xlab("Year") +
   labs(color = "")
@@ -616,7 +616,7 @@ b3 <- ggplot() +
   ) +
   scale_color_manual(values = c("Simulation" = "black", "Observed" = "blue")) +
   theme_bw() +
-  ggtitle(paste("SSB – Best combo:", best_combo)) +
+  ggtitle(paste("Catch – Best combo:", best_combo)) +
   ylab("Catch") +
   xlab("Year") +
   labs(color = "")
