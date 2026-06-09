@@ -117,7 +117,7 @@ age_split_Fbar <- function(input_path, output_path, species_folder, F_range, tr,
       
       DF_Z=rbind(DF_Zm,DF_Zf)
       
-      write.table(DF_Z,paste(output_path, "\\", species_folder, "\\Zmean_", spe, "_", tr_, "_ass.csv", sep=""), sep=";", row.names=F)
+      write.table(DF_Z,paste(output_path, "\\", species_folder, "\\Zmean_", spe, "_", tr_, "_assess.csv", sep=""), sep=";", row.names=F)
       
       }
     }
@@ -180,7 +180,7 @@ age_split_Fbar <- function(input_path, output_path, species_folder, F_range, tr,
       DF_Z2$sex="F"
       DF_Z=rbind(DF_Z,DF_Z2)
       
-      write.table(DF_Z,paste(output_path, "\\", species_folder, "\\Zmean_", spe, "_", tr_, "_ass.csv", sep=""), sep=";", row.names=F)                  
+      write.table(DF_Z,paste(output_path, "\\", species_folder, "\\Zmean_", spe, "_", tr_, "_assess.csv", sep=""), sep=";", row.names=F)                  
       
       
     }}} 
