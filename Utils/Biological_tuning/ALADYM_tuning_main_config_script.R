@@ -31,7 +31,7 @@ ip <- "C:\\INPUT\\ALADYM"
 op <- "C:\\INPUT\\ALADYM"
 
 # species folder - used for M and F files
-species_folder <- "DPS17181920"
+species_folder <- "HKE1718"
 
 
 # are there different M files for males and females?
@@ -40,8 +40,8 @@ M_different <- TRUE
 
 ## set the M files names -> make sure these start from age = 0 
 # sex-specific files?
-M_male <- "M_male_DPS.csv"
-M_female <- "M_female_DPS.csv"
+M_male <- "M_male_HKE.csv"
+M_female <- "M_female_HKE.csv"
 
 # same file?
 M_file <- "M_HKE.csv"
@@ -53,14 +53,14 @@ F_at_age_F <- "None" # "F_at_age_HKE_F.csv"
 
 ## set Fbar file name
 # Fbar_assessment <- "None"
-Fbar_assessment <- "Fbar_assessment_DPS.csv"
+Fbar_assessment <- "Fbar_assessment_HKE.csv"
 
 ## set initial configuration file -> must live in C:\INPUT\ALADYM
 ## make sure that NA values are specified as NAN (needed for the splitting)
-configuration <- "aladym_DPS_GSA17_18_19_20.csv"
+configuration <- "aladym_HKE_GSA17_18.csv"
 
 ## set tr
-tr = c(0, 1, 2, 3)
+tr = c(1, 2, 3, 4, 5) #, 6, 7, 8, 9, 10)
 
 ## set F_range over which to calculate Fbar, eg: list(c(0,3),c(1,4))
 # if you only have Fbar from assessment, set F_range = None
@@ -69,12 +69,11 @@ F_range = "None"
 # F_range = list(c(0,1),c(2,3),c(4,5))
 
 
-
 ## time series
 ts = c(2004:2024)
 
 ## species
-spe = 'DPS'
+spe = 'HKE'
 #####################################################
 
 
