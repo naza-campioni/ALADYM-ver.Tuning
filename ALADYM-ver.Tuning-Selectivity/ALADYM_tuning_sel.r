@@ -97,20 +97,63 @@ extract_results <- function(pd, index){
   
   # weighted average
   weights <- colSums(obs_fleet_catch, na.rm = TRUE) / sum(colSums(obs_fleet_catch, na.rm = TRUE), na.rm = TRUE)
-  fleet_err <- sum(fleet_err_means*weights, na.rm = TRUE)
   
+  
+  valid_fleets <- is.finite(fleet_err_means)
+  n_missing <- sum(!valid_fleets)
+  
+  missing_fleets <- names(fleet_err_means)[!valid_fleets]
+  
+  fleet_err <- weighted.mean(
+    fleet_err_means[valid_fleets],
+    weights[valid_fleets],
+    na.rm = TRUE
+  )
+  
+  missing_penalty <- 0.1 * n_missing
   
   rel_err <- list(
-    SSB = (as.numeric(SSB_annual$SSB) - as.numeric(SSB_assessment$SSB)) / as.numeric(SSB_assessment$SSB),
-    catch = (as.numeric(total_catch_sim$Total) - as.numeric(total_catch_obs$Total)) / as.numeric(total_catch_obs$Total),
-    Fbar = (as.numeric(F_annual$F) - as.numeric(F_assessment$F)) / as.numeric(F_assessment$F)
+    SSB = ifelse(
+      as.numeric(SSB_assessment$SSB) == 0,
+      NA,
+      (as.numeric(SSB_annual$SSB) - as.numeric(SSB_assessment$SSB)) /
+        as.numeric(SSB_assessment$SSB)
+    ),
+    
+    catch = ifelse(
+      as.numeric(total_catch_obs$Total) == 0,
+      NA,
+      (as.numeric(total_catch_sim$Total) - as.numeric(total_catch_obs$Total)) /
+        as.numeric(total_catch_obs$Total)
+    ),
+    
+    Fbar = ifelse(
+      as.numeric(F_assessment$F) == 0,
+      NA,
+      (as.numeric(F_annual$F) - as.numeric(F_assessment$F)) /
+        as.numeric(F_assessment$F)
+    )
   )
+  
+  
+  # rel_err <- list(
+  #   SSB = (as.numeric(SSB_annual$SSB) - as.numeric(SSB_assessment$SSB)) / as.numeric(SSB_assessment$SSB),
+  #   catch = (as.numeric(total_catch_sim$Total) - as.numeric(total_catch_obs$Total)) / as.numeric(total_catch_obs$Total),
+  #   Fbar = (as.numeric(F_annual$F) - as.numeric(F_assessment$F)) / as.numeric(F_assessment$F)
+  # )
   
   ssb_err   <- mean(rel_err$SSB^2,   na.rm = TRUE)
   catch_err <- mean(rel_err$catch^2, na.rm = TRUE)
   f_err     <- mean(rel_err$Fbar^2,  na.rm = TRUE)
   
-  score <- ssb_err + catch_err + f_err + fleet_err
+  score <- sum(
+    ssb_err,
+    catch_err,
+    f_err,
+    fleet_err,
+    missing_penalty,
+    na.rm = TRUE
+  )
   
   new_row <- data.frame(
     SSB = ssb_err,
@@ -162,52 +205,156 @@ extract_results <- function(pd, index){
   write.table(monthly_SSB, file.path(dir_to_create, "monthly_SSB.csv"), sep=";", row.names = FALSE)
   write.table(sim_fleet_catch, file.path(dir_to_create, "sim_fleet_catch.csv"), sep = ';', row.names = FALSE )
   write.table(obs_fleet_catch, file.path(dir_to_create, "obs_fleet_catch.csv"), sep = ';', row.names = FALSE )
+  writeLines(
+    missing_fleets,
+    file.path(dir_to_create, "missing_fleets.txt")
+  )
   
-  
+  # SSB
   jpeg(file.path(dir_to_create, "SSB_relative_error.jpeg"), width=1300, height=500)
   par(mfrow=c(1,1))
-  plot(years, rel_err$SSB, type="l", col="blue",
-       main=paste("Relative Error: SSB, config: ", CAL$combo_tag, sep=""),
-       ylab="(sim - obs)/obs", xlab="Year")
-  abline(h=0, lty=2, col="black")
-  dev.off()  
-  
-  jpeg(file.path(dir_to_create, "catch_relative_error.jpeg"), width=1300, height=500)
-  par(mfrow=c(1,1))
-  plot(years, rel_err$catch, type="l", col="blue",
-       main=paste("Relative Error: Catch, config: ", CAL$combo_tag, sep=""),
-       ylab="(sim - obs)/obs", xlab="Year")
-  abline(h=0, lty=2, col="black")
+  if (!any(is.finite(rel_err$SSB))) {
+    plot.new()
+    
+    title(
+      main = paste(
+        "SSB relative error",
+        "\nconfig =", CAL$combo_tag
+      )
+    )
+    
+    text(
+      0.5,
+      0.5,
+      "No finite values available",
+      cex = 1.5
+    )
+  } else {
+    
+    plot(years, rel_err$SSB, type="l", col="blue",
+         main=paste("Relative Error: SSB, config: ", CAL$combo_tag, sep=""),
+         ylab="(sim - obs)/obs", xlab="Year")
+    abline(h=0, lty=2, col="black")
+      
+  }
   dev.off()
   
+  
+  # catch
+  jpeg(file.path(dir_to_create, "catch_relative_error.jpeg"), width=1300, height=500)
+  par(mfrow=c(1,1))
+  
+  if (!any(is.finite(rel_err$catch))) {
+    plot.new()
+    
+    title(
+      main = paste(
+        "Catch relative error",
+        "\nconfig =", CAL$combo_tag
+      )
+    )
+    
+    text(
+      0.5,
+      0.5,
+      "No finite values available",
+      cex = 1.5
+    )
+  } else {
+    
+    plot(years, rel_err$catch, type="l", col="blue",
+         main=paste("Relative Error: Catch, config: ", CAL$combo_tag, sep=""),
+         ylab="(sim - obs)/obs", xlab="Year")
+    abline(h=0, lty=2, col="black")
+    
+  }
+  dev.off()
+
+  # Fbar
   jpeg(file.path(dir_to_create, "Fbar_relative_error.jpeg"), width=1300, height=500)
-  plot(years, rel_err$Fbar, type="l", col="blue",
-       main=paste("Relative Error: Fbar, config: ", CAL$combo_tag, sep=""),
-       ylab="(sim - obs)/obs", xlab="Year")
-  abline(h=0, lty=2, col="black")
-  dev.off()  
+  par(mfrow=c(1,1))
+  
+  if (!any(is.finite(rel_err$Fbar))) {
+    plot.new()
+    
+    title(
+      main = paste(
+        "Fbar relative error",
+        "\nconfig =", CAL$combo_tag
+      )
+    )
+    
+    text(
+      0.5,
+      0.5,
+      "No finite values available",
+      cex = 1.5
+    )
+  } else {
+    
+    plot(years, rel_err$Fbar, type="l", col="blue",
+         main=paste("Relative Error: Fbar, config: ", CAL$combo_tag, sep=""),
+         ylab="(sim - obs)/obs", xlab="Year")
+    abline(h=0, lty=2, col="black")
+    
+  }
+  dev.off()
+  
   
   for (fleet in colnames(fleet_rel_err)) {
     
-    # Build file name
-    out_path <- file.path(dir_to_create,
-                          paste0(fleet, "_diff_sim_obs.jpeg"))
+    # print(fleet)
+    
+    out_path <- file.path(
+      dir_to_create,
+      paste0(fleet, "_diff_sim_obs.jpeg")
+    )
     
     jpeg(out_path, width = 1300, height = 500)
     par(mfrow = c(1, 1))
     
-    plot(
-      years,
-      fleet_rel_err[[fleet]],
-      type = "l",
-      col = "blue",
-      main = paste("Difference (sim - obs):", fleet,
-                   "\nconfig =", CAL$combo_tag),
-      ylab = "sim - obs",
-      xlab = "Year"
-    )
+    y <- fleet_rel_err[[fleet]]
     
-    abline(h = 0, lty = 2, col = "black")
+    # CASE 1: all NA or non-finite
+    if (!any(is.finite(y))) {
+      
+      plot.new()
+      
+      title(
+        main = paste(
+          "Difference (sim - obs):", fleet,
+          "\nconfig =", CAL$combo_tag
+        )
+      )
+      
+      text(
+        0.5,
+        0.5,
+        "No finite values available",
+        cex = 1.5
+      )
+      
+    } else {
+      
+      # CASE 2: normal plot
+      plot(
+        years,
+        y,
+        type = "l",
+        col = "blue",
+        main = paste(
+          "Difference (sim - obs):",
+          fleet,
+          "\nconfig =",
+          CAL$combo_tag
+        ),
+        ylab = "sim - obs",
+        xlab = "Year"
+      )
+      
+      abline(h = 0, lty = 2, col = "black")
+    }
+    
     dev.off()
   }
   
@@ -1078,7 +1225,7 @@ b2 <- ggplot() +
   ) +
   scale_color_manual(values = c("Simulation" = "black", "Observed" = "blue")) +
   theme_bw() +
-  ggtitle(paste("SSB – Best combo:", best_combo)) +
+  ggtitle(paste("Fbar – Best combo:", best_combo)) +
   ylab("F") +
   xlab("Year") +
   labs(color = "")
@@ -1097,7 +1244,7 @@ b3 <- ggplot() +
   ) +
   scale_color_manual(values = c("Simulation" = "black", "Observed" = "blue")) +
   theme_bw() +
-  ggtitle(paste("SSB – Best combo:", best_combo)) +
+  ggtitle(paste("Catch – Best combo:", best_combo)) +
   ylab("Catch") +
   xlab("Year") +
   labs(color = "")
