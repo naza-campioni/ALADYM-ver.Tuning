@@ -112,7 +112,7 @@ for (r in DF_runs$run){
     
     # change Z file path accordingly
     old_Zpath = str_split(cfg[cfg$Parameters == "Z file",]$Distribution, pattern='.csv')[[1]][1]
-    new_Zpath = paste(old_Zpath, "_", DF_runs[r,]$tr, "_ass.csv", sep="")
+    new_Zpath = paste(old_Zpath, "_", DF_runs[r,]$tr, "_assess.csv", sep="")
     
     cfg[cfg$Parameters == "Z file",]$Distribution = new_Zpath
     
@@ -131,7 +131,7 @@ for (r in DF_runs$run){
     cfg[cfg$Parameters == "M file - Female",]$Distribution = new_Mfpath
     
     # save new config file
-    write.table(cfg, file=paste(output_path, "\\config_run_", DF_runs[r,]$tr, "_ass.csv",sep=""), sep=";", row.names = FALSE)
+    write.table(cfg, file=paste(output_path, "\\config_run_", DF_runs[r,]$tr, "_assess.csv",sep=""), sep=";", row.names = FALSE)
     
   }
   
