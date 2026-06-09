@@ -22,56 +22,110 @@ library(hash)
 # maps selectivity type -> parameters used
 # -----------------------------------------------------
 selectivity_id <- hash()
-selectivity_id[["1"]] <- list(c("param1", "param2"), c(1, 2))
-selectivity_id[["2"]] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
-selectivity_id[["3"]] <- list(c("param1", "param2"), c(1, 2))
-selectivity_id[["4"]] <- list(c("param1", "param2"), c(1, 2))
-selectivity_id[["5"]] <- list(c("param1", "param2", "param3", "param4", "param5"),
-                              c(1, 2, 3, 4, 5))
-selectivity_id[["6"]] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
+params_sel <- hash()
+# selectivity_id[["1"]] <- list(c("param1", "param2"), c(1, 2))
+# selectivity_id[["2"]] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
+# selectivity_id[["3"]] <- list(c("param1", "param2"), c(1, 2))
+# selectivity_id[["4"]] <- list(c("param1", "param2"), c(1, 2))
+# selectivity_id[["5"]] <- list(c("param1", "param2", "param3", "param4", "param5"),
+#                               c(1, 2, 3, 4, 5))
+# selectivity_id[["6"]] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
 
-# -----------------------------------------------------
-# Define selectivity parameters combinations per selectivity type
-# -----------------------------------------------------
-# sel 1
-p11 <- c(10, 15, 20) #seq(15, 20)
-p12 <- c(5, 6) #seq(3, 7)
+# this will need to be set according to each species
+# eg DTS for HKE has selectivity 2 (3 parameters) whereas DTS for DPS has selectivity
+# 1 (2 parameters)
 
-# sel 2
-p21 <- c(10, 15)
-p22 <- c(7, 8)
-p23 <- c(8, 10)
+#-----------------------------------
+# HKE
+#-----------------------------------
+selectivity_id[["DTS"]] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
+selectivity_id[['DFN']] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
+selectivity_id[['HOK']] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
+selectivity_id[['PGP']] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
 
-# sel 3
-p31 <- c(20, 25)
-p32 <- c(10, 15)
+# dts
+p_dts_1 <- c(140, 160, 180)
+p_dts_2 <- c(10, 30, 50)
+p_dts_3 <- c(430, 450, 470)
 
-# sel 4
-p41 <- c(12, 25)
-p42 <- c(6, 7)
-p43 <- c(7, 8)
+# dfn
+p_dfn_1 <- c(360, 380, 400)
+p_dfn_2 <- c(120, 140, 160)
+p_dfn_3 <- c(120, 140, 160)
 
-# sel 5
-p51 <- c(12, 25)
-p52 <- c(12, 25)
-p53 <- c(12, 25)
-p54 <- c(12, 25)
-p55 <- c(12, 25)
+# hok
+p_hok_1 <- c(430, 450, 470)
+p_hok_2 <- c(80, 100, 120)
+p_hok_3 <- c(100, 120, 140)
 
-# sel 6
-p61 <- c(12, 25)
-p62 <- c(10, 20)
-p63 <- c(15, 15)
-
+# pgp
+p_pgp_1 <- c(360, 380, 400)
+p_pgp_2 <- c(120, 140, 160)
+p_pgp_3 <- c(120, 140, 160)
 
 # per-selectivity-type parameters
-params_sel <- hash()
-params_sel[["1"]] <- list(p11, p12)
-params_sel[['2']] <- list(p21, p22, p23)
-params_sel[['3']] <- list(p31, p32)
-params_sel[['4']] <- list(p41, p42, p43)
-params_sel[['5']] <- list(p51, p52, p53, p54, p55)
-params_sel[['6']] <- list(p61, p62, p63)
+params_sel[['DTS']] <- list(p_dts_1, p_dts_2, p_dts_3)
+params_sel[['DFN']] <- list(p_dfn_1, p_dfn_2, p_dfn_3)
+params_sel[['HOK']] <- list(p_hok_1, p_hok_2, p_hok_3)
+params_sel[['PGP']] <- list(p_pgp_1, p_pgp_2, p_pgp_3)
+
+
+#----------------------------
+# DPS
+#----------------------------
+# selectivity_id[["DTS"]] <- list(c("param1", "param2"), c(1, 2))
+# 
+# # dts
+# p_dts_1 <- c(15, 17, 20)
+# p_dts_2 <- c(3, 5, 7)
+# 
+# # per-selectivity-type parameters
+# params_sel[['DTS']] <- list(p_dts_1, p_dts_2)
+
+#---------------------------
+# NEP
+#---------------------------
+# selectivity_id[['DTS']] <- list(c("param1", "param2"), c(1, 2))
+# selectivity_id[['DFN']] <- list(c("param1", "param2"), c(1, 2))
+# 
+# # dts
+# p_dts_1 <- c(17, 20, 23)
+# p_dts_2 <- c(4, 7, 10)
+# 
+# # dfn
+# p_dfn_1 <- c(17, 20, 23)
+# p_dfn_2 <- c(4, 6.9, 9)
+# 
+# # per-selectivity-type parameters
+# params_sel[['DTS']] <- list(p_dts_1, p_dts_2)
+# params_sel[['DFN']] <- list(p_dfn_1, p_dfn_2)
+
+
+#-------------------------
+# MUT
+#-------------------------
+# selectivity_id[['DTS']] <- list(c("param1", "param2"), c(1, 2))
+# selectivity_id[['DFN']] <- list(c("param1", "param2", "param3"), c(1, 2, 3))
+# selectivity_id[['PGP']] <- list(c("param1", "param2"), c(1, 2))
+# 
+# # dts
+# p_dts_1 <- c(80, 100, 120)
+# p_dts_2 <- c(8, 10, 12)
+# 
+# # dfn
+# p_dfn_1 <- c(150, 170, 190)
+# p_dfn_2 <- c(15, 25, 35)
+# p_dfn_3 <- c(20, 40, 60)
+# 
+# # pgp
+# p_pgp_1 <- c(80, 100, 120)
+# p_pgp_2 <- c(8, 10, 12)
+# 
+# # per-selectivity-type parameters
+# params_sel[['DTS']] <- list(p_dts_1, p_dts_2)
+# params_sel[['DFN']] <- list(p_dfn_1, p_dfn_2, p_dfn_3)
+# params_sel[['PGP']] <- list(p_pgp_1, p_pgp_2)
+
 
 
 # -----------------------------------------------------
@@ -90,10 +144,10 @@ spe <- 'HKE'
 spe_folder <- 'HKE1718'
 
 # original selectivity file
-sel_file <- "Selectivity_HKE_SEL.csv"
+sel_file <- "Selectivity_HKE.csv"
 
 # original configuration file
-configuration <- "aladym_HKE_GSA17_18_SEL.csv"
+configuration <- "aladym_HKE_GSA17_18.csv"
 
 
 # -----------------------------------------------------
